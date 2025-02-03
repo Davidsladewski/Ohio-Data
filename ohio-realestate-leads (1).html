@@ -301,39 +301,30 @@
         // Replace this with your deployed Google Apps Script URL
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbydsU0Ge79VZzbnWfh8Jolazcz9pOE_CA6X542Kv1OV52slerE4ip0wQhTBd3n5O4Tq8w/exec';
 
-        function submitForm(event) {
-            event.preventDefault();
-            
-            // Get form values
-            const email = document.getElementById('emailInput').value;
-            const phone = document.getElementById('phoneInput').value;
-            
-            // Hide overlay immediately for better UX
-            document.getElementById('overlay').style.display = 'none';
-            
-            // Submit to Google Sheets
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Required for Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    phone: phone,
-                    source: 'Ohio Real Estate Analytics',
-                    timestamp: new Date().toISOString()
-                })
-            })
-            .then(() => {
-                console.log('Lead submitted successfully');
-            })
-            .catch(error => {
-                console.error('Error submitting to sheet:', error);
-            });
-            
-            return false;
-        }
+       function submitForm(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('emailInput').value;
+    const phone = document.getElementById('phoneInput').value;
+    
+    // Hide overlay for better user experience
+    document.getElementById('overlay').style.display = 'none';
+    
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            phone: phone
+        })
+    })
+    .then(response => response.json()) // Try to get JSON response
+    .then(data => console.log("Server response:", data))
+    .catch(error => console.error("Error:", error));
+}
+
 
         document.addEventListener('DOMContentLoaded', function() {
             new Chart(document.getElementById('priceChart'), {
