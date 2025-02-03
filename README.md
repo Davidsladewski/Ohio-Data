@@ -1,1 +1,479 @@
-# Ohio-Data
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        /* Keeping all the existing styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .form-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .form-box h2 {
+            color: #2563eb;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .form-box p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.975rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: #1f2937;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #2563eb;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .card-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-stat:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #6b7280;
+        }
+
+        .stat-value {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .chart-title {
+            color: #1f2937;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay">
+        <div class="form-box">
+            <h2>Access Market Analytics</h2>
+            <p>Enter your contact information to view detailed Ohio real estate market analytics and trends.</p>
+            <form id="myForm">
+                <input type="email" id="emailInput" placeholder="Email Address" required>
+                <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                <button type="submit" onclick="submitForm(event)">View Market Analytics</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>Ohio Real Estate Market Analytics</h1>
+            <p>Comprehensive market analysis for major Ohio cities</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card">
+                <h2>Columbus</h2>
+                <div class="card-stat">
+                    <span class="stat-label">Average Price</span>
+                    <span class="stat-value">$275,000</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Days on Market</span>
+                    <span class="stat-value">15 days</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Price per Sq.Ft</span>
+                    <span class="stat-value">$165</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Cleveland</h2>
+                <div class="card-stat">
+                    <span class="stat-label">Average Price</span>
+                    <span class="stat-value">$225,000</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Days on Market</span>
+                    <span class="stat-value">18 days</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Price per Sq.Ft</span>
+                    <span class="stat-value">$135</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Cincinnati</h2>
+                <div class="card-stat">
+                    <span class="stat-label">Average Price</span>
+                    <span class="stat-value">$255,000</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Days on Market</span>
+                    <span class="stat-value">16 days</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Price per Sq.Ft</span>
+                    <span class="stat-value">$155</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Toledo</h2>
+                <div class="card-stat">
+                    <span class="stat-label">Average Price</span>
+                    <span class="stat-value">$185,000</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Days on Market</span>
+                    <span class="stat-value">20 days</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Price per Sq.Ft</span>
+                    <span class="stat-value">$120</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Dayton</h2>
+                <div class="card-stat">
+                    <span class="stat-label">Average Price</span>
+                    <span class="stat-value">$195,000</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Days on Market</span>
+                    <span class="stat-value">19 days</span>
+                </div>
+                <div class="card-stat">
+                    <span class="stat-label">Price per Sq.Ft</span>
+                    <span class="stat-value">$125</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3 class="chart-title">Average Home Prices by City</h3>
+                <canvas id="priceChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">Days on Market Comparison</h3>
+                <canvas id="domChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Price Trends (Last 6 Months)</h3>
+                <canvas id="trendChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Market Activity Index</h3>
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace this with your deployed Google Apps Script URL
+        const GOOGLE_SCRIPT_URL = 'YOUR_DEPLOYED_SCRIPT_URL';
+
+        function submitForm(event) {
+            event.preventDefault();
+            
+            // Get form values
+            const email = document.getElementById('emailInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            
+            // Hide overlay immediately for better UX
+            document.getElementById('overlay').style.display = 'none';
+            
+            // Submit to Google Sheets
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    phone: phone,
+                    source: 'Ohio Real Estate Analytics',
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(() => {
+                console.log('Lead submitted successfully');
+            })
+            .catch(error => {
+                console.error('Error submitting to sheet:', error);
+            });
+            
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            new Chart(document.getElementById('priceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Dayton'],
+                    datasets: [{
+                        label: 'Average Home Price ($)',
+                        data: [275000, 225000, 255000, 185000, 195000],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('domChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Dayton'],
+                    datasets: [{
+                        label: 'Days on Market',
+                        data: [15, 18, 16, 20, 19],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('trendChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                    datasets: [{
+                        label: 'Columbus',
+                        data: [265000, 268000, 270000, 272000, 273000, 275000],
+                        borderColor: '#2563eb',
+                        tension: 0.4
+                    }, {
+                        label: 'Cleveland',
+                        data: [215000, 218000, 220000, 222000, 224000, 225000],
+                        borderColor: '#3b82f6',
+                        tension: 0.4
+                    }, {
+                        label: 'Cincinnati',
+                        data: [245000, 248000, 250000, 252000, 254000, 255000],
+                        borderColor: '#6366f1',
+                        tension: 0.4
+                    }, {
+                        label: 'Toledo',
+                        data: [175000, 178000, 180000, 182000, 184000, 185000],
+                        borderColor: '#8b5cf6',
+                        tension: 0.4
+                    }, {
+                        label: 'Dayton',
+                        data: [185000, 188000, 190000, 192000, 194000, 195000],
+                        borderColor: '#ec4899',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('activityChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                    datasets: [{
+                        label: 'Market Activity Index',
+                        data: [85, 87, 92, 88, 94, 96],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            suggestedMin: 80,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
