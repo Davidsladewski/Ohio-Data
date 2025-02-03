@@ -303,13 +303,15 @@
 
        function submitForm(event) {
     event.preventDefault();
-    
+
     const email = document.getElementById('emailInput').value;
     const phone = document.getElementById('phoneInput').value;
-    
-    // Hide overlay for better user experience
-    document.getElementById('overlay').style.display = 'none';
-    
+
+    if (!email) {
+        alert("Please enter a valid email.");
+        return;
+    }
+
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         headers: {
@@ -320,10 +322,17 @@
             phone: phone
         })
     })
-    .then(response => response.json()) // Try to get JSON response
-    .then(data => console.log("Server response:", data))
-    .catch(error => console.error("Error:", error));
+    .then(response => response.text()) // Convert response to text for debugging
+    .then(data => {
+        console.log("Server response:", data);
+        alert("Form submitted successfully!");
+    })
+    .catch(error => {
+        console.error("Error submitting form:", error);
+        alert("Error submitting the form. Check console for details.");
+    });
 }
+
 
 
         document.addEventListener('DOMContentLoaded', function() {
