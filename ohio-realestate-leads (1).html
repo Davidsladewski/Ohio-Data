@@ -299,47 +299,40 @@
 
     <script>
         // Replace this with your deployed Google Apps Script URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX_BPMLEimsEs8HH4K470TnkLt0_gc5johZvKtO-cGp0XnsUIh0MQg-t7YsXQ2tNJ_/exec';
+       const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
-       function doPost(e) {
-    Logger.log("Received request: " + JSON.stringify(e));
+function submitForm(event) {
+    event.preventDefault();
 
-    const sheet = SpreadsheetApp.openById("YOUR_SHEET_ID"); // Replace with actual Google Sheet ID
-    const sheetRef = sheet.getSheetByName("Sheet1"); // Ensure correct sheet name
+    const email = document.getElementById('emailInput').value;
+    const phone = document.getElementById('phoneInput').value;
 
-    if (!sheetRef) {
-        Logger.log("Error: Sheet not found!");
-        return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'Sheet not found' }))
-            .setMimeType(ContentService.MimeType.JSON);
+    if (!email) {
+        alert("Please enter a valid email.");
+        return;
     }
 
-    try {
-        if (!e || !e.postData || !e.postData.contents) {
-            Logger.log("Error: No data received!");
-            return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'No data received' }))
-                .setMimeType(ContentService.MimeType.JSON);
-        }
-
-        const data = JSON.parse(e.postData.contents);
-        const timestamp = new Date();
-
-        Logger.log("Saving Data: Email - " + data.email + ", Phone - " + (data.phone || "Not provided"));
-
-        sheetRef.appendRow([
-            timestamp,
-            data.email || "No Email",
-            data.phone || "No Phone"
-        ]);
-
-        return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
-            .setMimeType(ContentService.MimeType.JSON);
-        
-    } catch (error) {
-        Logger.log("Processing error: " + error);
-        return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
-            .setMimeType(ContentService.MimeType.JSON);
-    }
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            phone: phone
+        })
+    })
+    .then(response => response.json())  // Expect JSON response
+    .then(data => {
+        console.log("Server response:", data);
+        alert(data.status === 'success' ? "Form submitted successfully!" : "Error: " + data.message);
+    })
+    .catch(error => {
+        console.error("Error submitting form:", error);
+        alert("Error submitting the form. Check console for details.");
+    });
 }
+
 
 
 
